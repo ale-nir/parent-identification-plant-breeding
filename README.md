@@ -60,7 +60,7 @@ setwd("path/to/repository")
 Source the setup script.
 
 ```r
-source("R/setup.R")
+source("setup.R")
 ```
 
 This script automatically loads every function required by the analysis pipeline as well as datasets.

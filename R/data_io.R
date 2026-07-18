@@ -19,8 +19,8 @@
 #   - bin_matrix : binary genotype matrix
 # =============================================================================
 
-load_project_data <- function(data_file = "../data/data.csv",
-                              bin_file  = "../data/bin.csv") {
+load_project_data <- function(data_file = here("data", "data.csv"),
+                              bin_file  = here("data", "bin.csv")) {
 
   data <- read.csv(
     data_file,

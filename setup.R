@@ -5,6 +5,7 @@
 # =============================================================================
 
 required_packages <- c(
+  "here",
   "dplyr",
   "stringr",
   "ggplot2",
@@ -31,17 +32,18 @@ invisible(
   lapply(required_packages, library, character.only = TRUE)
 )
 
-Rcpp::sourceCpp("../src/jaccard_cpp.cpp")
-Rcpp::sourceCpp("../src/lod_cpp.cpp")
 
-source("data_io.R")
-source("pedigree_processing.R")
+Rcpp::sourceCpp(here("src","jaccard_cpp.cpp"))
+Rcpp::sourceCpp(here("src","lod_cpp.cpp"))
+
+source(here("R","data_io.R"))
+source(here("R","pedigree_processing.R"))
 
 datasets <- load_project_data()
 
 data <- datasets$data
 bin_matrix <- datasets$bin_matrix
 
-source("parentage_utils.R")
-source("jaccard_analysis.R")
-source("lod_analysis.R")
+source(here("R","parentage_utils.R"))
+source(here("R","jaccard_analysis.R"))
+source(here("R","lod_analysis.R"))
