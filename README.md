@@ -181,7 +181,7 @@ The returned objects contains:
 
 ---
 
-#Step 6 – Compare Jaccard and LOD results
+# Step 6 – Compare Jaccard and LOD results
 
 ## Top-k comparison
 
