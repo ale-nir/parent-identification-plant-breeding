@@ -10,7 +10,7 @@ Alexandra Nirsha¹, John Riviere², Martin Spanoghe², Deborah Lanterbecq¹,²,�
 
 ³ Hainaut Analyses (HA), 7000 Mons, Belgium
 
-#The repo content:
+# The repo content:
 
 - implementation of the Jaccard similarity metric
 - implementation of the binary LOD score
