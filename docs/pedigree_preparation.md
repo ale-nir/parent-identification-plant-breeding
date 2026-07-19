@@ -1,5 +1,3 @@
----
-
 # Create pedigree subsets
 
 Create the pedigree subsets used during validation.

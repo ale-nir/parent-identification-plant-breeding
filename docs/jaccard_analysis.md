@@ -1,6 +1,3 @@
----
-
-
 # Compute the Jaccard similarity matrix
 
 The similarity matrix only needs to be computed once.

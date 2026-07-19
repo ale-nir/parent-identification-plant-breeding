@@ -1,5 +1,3 @@
----
-
 # Compare Jaccard and LOD results
 
 ## Top-k comparison

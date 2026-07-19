@@ -1,5 +1,3 @@
----
-
 # Compute the LOD matrix
 
 Compute the LOD matrix once.
