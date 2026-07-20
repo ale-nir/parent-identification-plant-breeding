@@ -106,7 +106,7 @@
 # varieties_with_parents : dataframe containing the varieties included in the
 #                          parentage analysis.
 #
-# top_n : number of highest-ranked candidates retained.
+# top_k : number of highest-ranked candidates retained.
 #
 # Returns
 # -------
@@ -135,7 +135,7 @@
 analyze_parentage_jaccard <- function(data,
                                       jaccard_matrix,
                                       varieties_with_parents,
-                                      top_n){
+                                      top_k){
 
   ## -------------------------------------------------------------------------
   ## Initialisation
@@ -185,7 +185,7 @@ analyze_parentage_jaccard <- function(data,
 
     ranking <- ranking[ranking != variety_index]
 
-    top_candidates <- ranking[seq_len(top_n)]
+    top_candidates <- ranking[seq_len(top_k)]
 
     top_scores <- data.frame(
       Genotype = data$Name[top_candidates],
