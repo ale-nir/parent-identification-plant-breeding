@@ -299,3 +299,247 @@ analyze_parentage_jaccard <- function(data,
 
   )
 }
+
+# ==============================================================================
+# Structural analysis of Jaccard similarity distributions
+#
+# These functions characterize Jaccard similarity distributions among
+# documented parents, siblings and unrelated varieties. They were used to
+# evaluate the discriminatory power of the Jaccard metric and to derive
+# empirical similarity thresholds.
+# ==============================================================================
+# Generate Jaccard scores for biologically related and unrelated varieties
+#
+# This function extracts Jaccard similarity scores between each variety and
+# three categories of varieties:
+#   - documented parents,
+#   - full or half siblings,
+#   - randomly selected unrelated varieties.
+#
+# The resulting dataset can be used to characterize the distribution of
+# Jaccard similarity values among different biological relationship groups and
+# to perform statistical comparisons between them.
+#
+# Parameters
+# ----------
+# data : data.frame
+#     Metadata containing variety names and pedigree information.
+#
+# J : matrix
+#     Precomputed Jaccard similarity matrix.
+#
+# varieties_list : data.frame
+#     Data frame containing the validation varieties.
+#
+# Returns
+# -------
+# A data frame containing one row per variety pair with the following columns:
+#     Variety : focal variety.
+#     Partner : related or unrelated variety.
+#     Group   : Parent, Sibling or Random.
+#     Jaccard : Jaccard similarity score.
+# ==============================================================================
+
+generate_jaccard_relationship_scores <- function(data,
+                                                 J,
+                                                 varieties_list) {
+
+  name_index <- setNames(
+    seq_len(nrow(data)),
+    tolower(data$Name)
+  )
+
+  results <- vector("list", nrow(varieties_list) * 10)
+  k <- 1
+
+  for (var_name in varieties_list$Name) {
+
+    message("Processing: ", var_name)
+
+    var_id <- name_index[[tolower(var_name)]]
+
+    if (is.null(var_id))
+      next
+
+    related_info <- identify_related_varieties(var_name, data)
+
+    children <- tolower(related_info$children)
+    siblings <- tolower(related_info$siblings)
+
+    parents <- strsplit(
+      tolower(data$Available.Pedigree[var_id]),
+      " x "
+    )[[1]]
+
+    parents <- trimws(parents)
+
+    parents[
+      parents %in% c("", "na", "n/a", "unknown", "?", "null")
+    ] <- NA
+
+    ## -------------------------------------------------------------------------
+    ## Parents
+    ## -------------------------------------------------------------------------
+
+    for (parent in na.omit(parents)) {
+
+      parent_id <- name_index[[parent]]
+
+      if (!is.null(parent_id)) {
+
+        results[[k]] <- data.frame(
+          Variety = var_name,
+          Partner = data$Name[parent_id],
+          Group = "Parent",
+          Jaccard = J[var_id, parent_id],
+          stringsAsFactors = FALSE
+        )
+
+        k <- k + 1
+      }
+    }
+
+    ## -------------------------------------------------------------------------
+    ## Siblings
+    ## -------------------------------------------------------------------------
+
+    for (sibling in siblings) {
+
+      sibling_id <- name_index[[sibling]]
+
+      if (!is.null(sibling_id)) {
+
+        results[[k]] <- data.frame(
+          Variety = var_name,
+          Partner = data$Name[sibling_id],
+          Group = "Sibling",
+          Jaccard = J[var_id, sibling_id],
+          stringsAsFactors = FALSE
+        )
+
+        k <- k + 1
+      }
+    }
+
+    ## -------------------------------------------------------------------------
+    ## Random varieties
+    ## -------------------------------------------------------------------------
+
+    excluded <- unique(c(
+      tolower(var_name),
+      parents,
+      children,
+      siblings
+    ))
+
+    available_ids <- which(
+      !(tolower(data$Name) %in% excluded)
+    )
+
+    if (length(available_ids) > 0) {
+
+      random_ids <- sample(
+        available_ids,
+        min(5, length(available_ids))
+      )
+
+      for (rid in random_ids) {
+
+        results[[k]] <- data.frame(
+          Variety = var_name,
+          Partner = data$Name[rid],
+          Group = "Random",
+          Jaccard = J[var_id, rid],
+          stringsAsFactors = FALSE
+        )
+
+        k <- k + 1
+      }
+    }
+  }
+
+  do.call(rbind, results[seq_len(k - 1)])
+}
+
+# ==============================================================================
+# Compare Jaccard similarity distributions among relationship groups
+#
+# This function performs a statistical comparison of Jaccard similarity scores
+# between biologically related and unrelated varieties.
+#
+# It computes descriptive statistics for each relationship group and performs:
+#   - a Kruskal–Wallis test to assess overall differences among groups;
+#   - a post-hoc Dunn test with Bonferroni correction for pairwise comparisons.
+#
+# Parameters
+# ----------
+# jaccard_df : data.frame
+#     Data frame generated by generate_jaccard_relationship_scores().
+#
+# Returns
+# -------
+# A list containing:
+#     summary  : descriptive statistics for each relationship group.
+#     kruskal : Kruskal–Wallis test results.
+#     dunn     : Dunn post-hoc test results.
+# ==============================================================================
+
+analyze_jaccard_relationships <- function(jaccard_df) {
+
+  ## ---------------------------------------------------------------------------
+  ## Descriptive statistics
+  ## ---------------------------------------------------------------------------
+
+  summary_stats <- aggregate(
+    Jaccard ~ Group,
+    data = jaccard_df,
+    FUN = function(x) {
+
+      c(
+        n = length(x),
+        mean = mean(x, na.rm = TRUE),
+        sd = sd(x, na.rm = TRUE),
+        median = median(x, na.rm = TRUE),
+        IQR = IQR(x, na.rm = TRUE)
+      )
+
+    }
+  )
+
+  summary_stats <- do.call(
+    rbind,
+    lapply(summary_stats, as.list)
+  )
+
+  rownames(summary_stats) <- NULL
+
+  ## ---------------------------------------------------------------------------
+  ## Kruskal–Wallis test
+  ## ---------------------------------------------------------------------------
+
+  kruskal_test <- kruskal.test(
+    Jaccard ~ Group,
+    data = jaccard_df
+  )
+
+  ## ---------------------------------------------------------------------------
+  ## Dunn post-hoc test
+  ## ---------------------------------------------------------------------------
+
+  dunn_test <- dunn.test(
+    jaccard_df$Jaccard,
+    jaccard_df$Group,
+    method = "bonferroni"
+  )
+
+  ## ---------------------------------------------------------------------------
+  ## Return results
+  ## ---------------------------------------------------------------------------
+
+  list(
+    summary = summary_stats,
+    kruskal = kruskal_test,
+    dunn = dunn_test
+  )
+
+}

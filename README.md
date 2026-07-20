@@ -2,6 +2,7 @@
 *This repository accompanies the manuscript which is currenly under review*
 
 **Improving parent identification in plant breeding using combined similarity and likelihood metrics**
+
 Authors: *Alexandra Nirsha¹, John Riviere², Martin Spanoghe², Deborah Lanterbecq¹,²,³*
 
 ¹ Centre pour l’Agronomie et l’Agro-Industrie de la Province de Hainaut (asbl CARAH), 7800 Ath, Belgium
@@ -113,6 +114,7 @@ Detailed documentation for each analysis step is available below.
 - [Jaccard analysis](docs/jaccard_analysis.md)
 - [LOD analysis](docs/LOD_analysis.md)
 - [Combined analysis](docs/combined_analysis.md)
+- [Plotting figures](docs/plotting.md)
 
 ---
 
