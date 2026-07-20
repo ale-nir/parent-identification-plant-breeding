@@ -131,3 +131,14 @@ save_publication_figure(
   plot = p,
   filename = "jaccard_structural_analysis"
 )
+
+# ==============================================================================
+# The objects generated throughout this workflow also contain the summary
+# statistics reported in the manuscript tables.
+#
+# Examples:
+#   parentage_both$success_rate_global
+#   parentage_any$success_rate_global
+#   relationship_both$score_stats
+#   relationship_any$score_stats
+# ==============================================================================

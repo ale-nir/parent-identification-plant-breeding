@@ -118,6 +118,18 @@ Detailed documentation for each analysis step is available below.
 
 ---
 
+## Reproducing the manuscript results
+
+The complete workflow used to generate the manuscript figures is available in:
+
+```r
+source("examples/reproduce_manuscript_figures.R")
+```
+
+This script reproduces the analyses used for the publication figures and generates the intermediate analysis objects from which the Jaccard summary tables reported in the manuscript are also derived.
+
+---
+
 # Citation
 
 If you use this repository in your work, please cite:
