@@ -10,13 +10,15 @@ Perform the Jaccard parentage analysis for the biparental and single-parent subs
 jaccard_both <- analyze_parentage_jaccard(
     data,
     J,
-    varieties_both_parents
+    varieties_both_parents,
+    top_k = 10
 )
 
 jaccard_any <- analyze_parentage_jaccard(
     data,
     J,
-    varieties_any_parent
+    varieties_any_parent,
+    top_k = 10
 )
 ```
 
