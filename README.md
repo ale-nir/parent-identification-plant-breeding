@@ -142,6 +142,10 @@ The citation will be updated once the manuscript is published.
 
 # License
 
-This project is distributed under the GNU General Public License v3.0 (GPL-3).
+This repository is released under the Academic Research License.
 
-See the LICENSE file for details.
+The source code is provided to ensure scientific transparency and reproducibility of the associated publication.
+
+Commercial use or integration into proprietary software requires prior written authorization from CARAH asbl.
+
+For commercial licensing opportunities or other permissions, please contact: deborah.lanterbecq@condorcet.be | a.nirsha@carah.be
