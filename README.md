@@ -72,6 +72,7 @@ or download the repository as a ZIP archive from GitHub and extract it.
 ├── data/
 ├── docs/
 ├── scripts/
+├── examples/
 ├── setup.R
 ├── README.md
 └── LICENSE
