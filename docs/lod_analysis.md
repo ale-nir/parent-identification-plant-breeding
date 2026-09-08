@@ -25,7 +25,7 @@ for(k in top_values){
       data,
       L,
       varieties_both_parents,
-      top_k = k
+      k
     )
 
   lod_any[[paste0("Top", k)]] <-
@@ -33,9 +33,8 @@ for(k in top_values){
       data,
       L,
       varieties_any_parent,
-      top_k = k
+      k
     )
-
 }
 ```
 
