@@ -1,9 +1,10 @@
 # Improving Parent Identification in Plant Breeding
-*This repository accompanies the manuscript which is currenly under review*
+
+*This repository accompanies the manuscript currently under review.*
 
 **Improving parent identification in plant breeding using combined similarity and likelihood metrics**
 
-Authors: *Alexandra Nirsha¹, John Riviere², Martin Spanoghe², Deborah Lanterbecq¹,²,³*
+Authors: *Alexandra Nirsha¹,  Martin Spanoghe², John Riviere², Deborah Lanterbecq¹,²,³*
 
 ¹ Centre pour l’Agronomie et l’Agro-Industrie de la Province de Hainaut (asbl CARAH), 7800 Ath, Belgium
 
@@ -13,7 +14,6 @@ Authors: *Alexandra Nirsha¹, John Riviere², Martin Spanoghe², Deborah Lanterb
 
 Journal: *Discover Plants* (under review)
 
-
 ---
 
 # Overview
@@ -22,33 +22,58 @@ This repository provides a complete workflow for evaluating parent–offspring r
 
 The implemented pipeline combines:
 
-- Jaccard similarity analysis
-- LOD score computation
-- comparative analysis between both approaches
-- graphical visualization of the results
+* Jaccard similarity analysis;
+* LOD score computation;
+* comparative analysis of both approaches;
+* graphical visualization of the results.
 
 The workflow reproduces the analyses presented in the accompanying manuscript.
 
 ## Contents
 
-- pedigree preparation functions
-- Jaccard similarity analysis
-- LOD score analysis
-- combined Jaccard–LOD comparison
-- plotting utilities
-- scripts reproducing the manuscript figures
-- anonymized example dataset
+* anonymized example dataset.
+* pedigree preparation functions;
+* Jaccard similarity analysis;
+* LOD score analysis;
+* combined Jaccard–LOD comparison;
+* plotting utilities;
+* scripts reproducing the manuscript results;
 
 ## Workflow
 
-1. Load the project.
-2. Load the example dataset.
-3. Prepare pedigree subsets.
-4. Compute similarity matrices.
-5. Perform Jaccard analysis.
-6. Perform LOD analysis.
-7. Compare both methods.
-8. Generate figures.
+The analysis follows the workflow below:
+
+1. Load the project and required dependencies.
+2. Load and prepare the binary data and pedigree information.
+3. Define the relevant pedigree subsets.
+4. Perform Jaccard similarity analysis.
+5. Perform LOD score analysis.
+6. Combine the results from both approaches.
+7. Generate figures reported in the manuscript.
+
+```text
+Input binary data
+        +
+Pedigree metadata
+        │
+        ▼
+Data & pedigree preparation
+        │
+        ▼
+Similarity and likelihood computation
+        │
+      ┌─┴─┐
+      ▼   ▼
+  Jaccard  LOD
+  analysis analysis
+      │   │
+      └─┬─┘
+        ▼
+ Combined analysis
+        │
+        ▼
+Tables and figures
+```
 
 ---
 
@@ -59,30 +84,52 @@ The workflow reproduces the analyses presented in the accompanying manuscript.
 ```bash
 git clone https://github.com/ale-nir/parent-identification-plant-breeding.git
 ```
-or download the repository as a ZIP archive from GitHub and extract it.
+
+Alternatively, download the repository as a ZIP archive from GitHub and extract it.
 
 ---
 
 ## Repository structure
 
-```bash
+```text
 .
-├── R/
-├── src/
-├── data/
-├── docs/
-├── scripts/
-├── examples/
-├── setup.R
 ├── README.md
-└── LICENSE
+├── LICENSE
+├── setup.R
+│
+├── data/
+│	├── bin.csv
+│   └── data.csv
+│
+├── docs/
+│   ├── 01-pedigree_preparation.md
+│   ├── 02-jaccard_analysis.md
+│   ├── 03-lod_analysis.md
+
+
+│   └── 08_reproduce_manuscript.md
+│
+├── R/
+	├── data_io.R
+	├── jaccard_analysis.R
+│   └── ...
+│
+├── src/
+│	├── jaccard_cpp.cpp
+│   └── lod_cpp.cpp
+│
+├── scripts/
+│   └── ...
+│
+└── examples/
+    └── reproduce_manuscript_figures.R
 ```
 
 ---
 
 ## Open the project
 
-Open the project in RStudio (recommended) or set the working directory to the repository root.
+Open the project in RStudio (recommended), or set the working directory to the repository root.
 
 ```r
 setwd("path/to/repository")
@@ -92,7 +139,7 @@ setwd("path/to/repository")
 
 ## Quick start
 
-Source the setup script. 
+Source the setup script:
 
 ```r
 source("setup.R")
@@ -100,34 +147,232 @@ source("setup.R")
 
 This script automatically:
 
-- installs missing packages (if necessary);
-- loads all required functions;
-- compiles the C++ source files;
-- loads the example dataset.
+* installs missing packages, if necessary;
+* loads all required packages and functions;
+* compiles the C++ source files;
+* loads the example dataset.
 
 ---
 
-# Documentation
+# Reproduce the Analysis
 
-Detailed documentation for each analysis step is available below.
+The following sections describe the analysis workflow step by step. Each step provides instructions and identifies the main objects generated for use in downstream analyses.
 
-- [Pedigree preparation](docs/pedigree_preparation.md)
-- [Jaccard analysis](docs/jaccard_analysis.md)
-- [LOD analysis](docs/LOD_analysis.md)
-- [Combined analysis](docs/combined_analysis.md)
-- [Plotting figures](docs/plotting.md)
+## Step 1 – Prepare the data
+
+The main datasets are loaded when `setup.R` is sourced. The data must then be processed according to the instructions below:
+
+[Pedigree preparation](docs/01-pedigree_preparation.md)
+
+After completing this step, two main objects should be available, corresponding to the biparental and single-parent subsets:
+
+```r
+varieties_both_parents
+varieties_any_parent
+```
+
+These objects should be retained for downstream analyses.
 
 ---
 
-## Reproducing the manuscript results
+## Step 2 – Compute Jaccard similarity for both subsets
 
-The complete workflow used to generate the manuscript figures is available in:
+Follow the instructions below to compute Jaccard similarity scores for the two pedigree subsets:
+
+[Jaccard analysis](docs/02-jaccard_analysis.md)
+
+This step first computes a complete pairwise Jaccard similarity matrix and then uses it for the parent-retrieval and structural analyses.
+
+The following main objects are generated:
+
+### 1. Pairwise Jaccard similarity matrix
+
+```r
+J
+```
+
+`J` contains the pairwise Jaccard similarity scores for all varieties in the dataset. Each value represents the Jaccard similarity between a pair of varieties and is used as the input for all subsequent Jaccard analyses.
+
+The matrix is computed once and reused throughout the workflow.
+
+### 2. Jaccard parent-retrieval results
+
+```r
+jaccard_both
+jaccard_any
+```
+
+These objects contain the parent-retrieval results for different top-*k* values (*k* = 1, 5, 10, and 20).
+
+To access the results for a specific top-*k* value, use, for example:
+
+```r
+jaccard_both$Top10
+```
+
+The returned object contains:
+
+* detailed parent-retrieval results;
+* recovery statistics;
+* summary tables.
+
+### 3. Relationship-structure results
+
+The following objects contain information on the relationship structure used to evaluate the Jaccard similarity distributions:
+
+```r
+jaccard_struct_both
+jaccard_struct_any
+```
+
+The relationship groups are:
+
+* **Parent** – documented parent–offspring relationships;
+* **Sibling** – varieties sharing at least one documented parent;
+* **Random** – randomly selected unrelated varieties.
+
+### 4. Similarity-distribution results
+
+The following objects contain detailed Jaccard similarity distributions for the different relationship groups:
+
+```r
+results_both
+results_any
+```
+
+Each object contains:
+
+* `summary` – descriptive statistics for each relationship group;
+* `kruskal` – Kruskal–Wallis test results;
+* `dunn` – Dunn post-hoc test results with Bonferroni correction.
+
+These objects can be used to compute effect sizes:
+
+```r
+effect_both
+effect_any
+```
+
+These objects contain detailed tables of effect-size results derived from the Dunn test.
+
+## Step 3 – Compute LOD scores for both subsets
+
+Follow the instructions below to compute LOD scores for the two pedigree subsets:
+
+[LOD analysis](docs/03-lod_analysis.md)
+
+This step first computes a complete pairwise LOD score matrix and then uses it for parent retrieval at different top-*k* thresholds.
+
+The following main objects are generated:
+
+### 1. Pairwise LOD score matrix
+
+```r
+L
+```
+
+`L` contains the pairwise LOD scores calculated for all varieties in the dataset. Each value represents the likelihood-based score between a pair of varieties and is used as the input for the subsequent LOD parent-retrieval analysis.
+
+The matrix is computed once and reused throughout the workflow.
+
+### 2. LOD parent-retrieval results
+
+```r
+lod_both
+lod_any
+```
+
+These objects contain the parent-retrieval results for different top-*k* values (*k* = 1, 5, 10, and 20).
+
+To access the results for a specific top-*k* value, use, for example:
+
+```r
+lod_both$Top10
+```
+
+The returned object contains:
+
+* detailed results;
+* all_parent_scores;
+* filtered_parent_scores;
+* success_rate_global;
+* success_rates_by_parent;
+* score_stats.
+
+## Step 4 – Perform a combined analysis on both subsets
+
+Follow the instructions below to cperform a combined analysis for the two pedigree subsets:
+
+[Combined analysis](docs/04-combined_analysis.md)
+
+The following instructions generate the objects bellow:
+
+```r
+combined_both
+combined_any
+```
+
+These objects contain comparison results on parent retrieval with both methods at top-10 level. In the same time: 
+
+```r
+combined_both_iqr
+combined_any_iqr
+```
+
+where for Jaccard similarity metrics parent recovery was be evaluated using a similarity interval.
+
+Each combined analysis returns a list containing
+
+- **summary_table**
+
+  Detailed comparison for every documented parent, including
+
+  - Jaccard rank
+  - Jaccard similarity
+  - LOD rank
+  - LOD score
+  - recovery by each method
+  - concordance status
+
+- **global_stats**
+
+  Summary statistics reporting
+
+  - Both methods
+  - Jaccard only
+  - LOD only
+  - Neither
+  - Concordant
+  - Discordant
+
+as both absolute counts and percentages.
+
+---
+
+## Step 5 – Reproduce the manuscript figures
+
+To generate the two main figures from the manuscript:
+
+1. **Figure 3:** Distribution and empirical calibration of Jaccard similarity scores for documented parent–offspring pairs.
+2. **Figure 4:** Distribution of Jaccard similarity scores across relationship categories in the biparental and single-parent subsets.
+
+Follow the instructions provided in the documentation below:
+
+[Plotting figures](docs/05-plotting.md)
+
+Alternatively, the complete figure-generation workflow can be executed with:
 
 ```r
 source("examples/reproduce_manuscript_figures.R")
 ```
 
-This script reproduces the analyses used for the publication figures and generates the intermediate analysis objects from which the Jaccard summary tables reported in the manuscript are also derived.
+This script runs the analyses required to generate the manuscript figures and produces the corresponding JPEG files in the repository root:
+
+```text
+fig.3-jaccard_distribution_plot.jpeg
+fig.4-jaccard_structural_analysis.jpeg
+```
+
 
 ---
 
@@ -135,7 +380,7 @@ This script reproduces the analyses used for the publication figures and generat
 
 If you use this repository in your work, please cite:
 
-Nirsha A., Rivière J., Spanonghe M., Lanterbecq D. (2026) *Improving parent identification in plant breeding using combined similarity and likelihood metrics.* (under review)
+Nirsha A.,  Spanonghe M., Rivière J., Lanterbecq D. (2026) *Improving parent identification in plant breeding using combined similarity and likelihood metrics.* (under review)
 
 The citation will be updated once the manuscript is published.
 

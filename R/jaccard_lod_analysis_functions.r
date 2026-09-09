@@ -53,11 +53,11 @@ analyze_pedigrees <- function(data) {
 # ------------------------------------------------------------
 # 2. JACCARD SIMILARITY
 # ------------------------------------------------------------
-Rcpp::sourceCpp("jaccard_cpp.cpp")
-bin_matrix <- as.matrix(bin)
-storage.mode(bin_matrix) <- "integer"
 
-J <- compute_jaccard_matrix_cpp(bin_matrix)
+# bin_matrix <- as.matrix(bin)
+# storage.mode(bin_matrix) <- "integer"
+
+# J <- compute_jaccard_matrix_cpp(bin_matrix)
 
 
 
@@ -362,9 +362,9 @@ analyze_parentage_jaccard <- function(data,
 # S5.2/lod_cpp.cpp
 #
 # To compile:
-Rcpp::sourceCpp("S5.2_lod_computation/lod_cpp.cpp")
+# Rcpp::sourceCpp("S5.2_lod_computation/lod_cpp.cpp")
 
-L <- compute_lod_matrix_cpp(bin_matrix)
+# L <- compute_lod_matrix_cpp(bin_matrix)
 
 # 4.2. Filtering of related varieties
 # ------------------------------------------------------------
@@ -1130,3 +1130,24 @@ ggsave(
 # ------------------------------------------------------------
 # See S5.3 folder for usage examples
 # ------------------------------------------------------------
+
+calculate_dunn_effect_size <- function(dunn_result, N) {
+
+  data.frame(
+    Comparison = dunn_result$comparisons,
+    Z = dunn_result$Z,
+    Effect_size_r = dunn_result$Z / sqrt(N),
+    P_adjusted = dunn_result$P.adjusted,
+    stringsAsFactors = FALSE
+  )
+}
+
+effect_both <- calculate_dunn_effect_size(
+  results_both$dunn,
+  nrow(jaccard_both)
+)
+
+effect_any <- calculate_dunn_effect_size(
+  results_any$dunn,
+  nrow(jaccard_any)
+)

@@ -543,3 +543,35 @@ analyze_jaccard_relationships <- function(jaccard_df) {
   )
 
 }
+
+# ------------------------------------------------------------------------------
+# Calculate effect sizes for Dunn's post-hoc comparisons
+#
+# Calculates the effect size r for each pairwise comparison obtained from a
+# Dunn's post-hoc test. The effect size is derived from the standardized Z
+# statistic as r = Z / sqrt(N), where N is the total sample size used for
+# the analysis. The function returns the comparison, Z statistic, effect size,
+# and adjusted P-value for each pairwise comparison.
+#
+# Args:
+#   dunn_result: Result object returned by the Dunn's post-hoc test, containing
+#                pairwise comparisons, Z statistics, and adjusted P-values.
+#   N: Total sample size used in the analysis.
+#
+# Returns:
+#   A data frame containing:
+#     - Comparison: Pairwise groups being compared.
+#     - Z: Z statistic from the Dunn's post-hoc test.
+#     - Effect_size_r: Effect size r calculated as Z / sqrt(N).
+#     - P_adjusted: Multiple-testing adjusted P-value for the comparison.
+# ------------------------------------------------------------------------------
+calculate_dunn_effect_size <- function(dunn_result, N) {
+
+  data.frame(
+    Comparison = dunn_result$comparisons,
+    Z = dunn_result$Z,
+    Effect_size_r = dunn_result$Z / sqrt(N),
+    P_adjusted = dunn_result$P.adjusted,
+    stringsAsFactors = FALSE
+  )
+}

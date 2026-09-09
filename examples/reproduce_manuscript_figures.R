@@ -12,8 +12,6 @@
 # documentation files located in the docs/ directory.
 # ==============================================================================
 
-source("setup.R")
-
 # ==============================================================================
 # Figure 1
 # Jaccard similarity distribution for documented parent-offspring pairs.
@@ -21,18 +19,6 @@ source("setup.R")
 # The parentage analysis results generated in this section are also used to
 # compute the parent retrieval statistics reported in the manuscript.
 # ==============================================================================
-
-ped <- create_pedigree_subsets(data)
-
-varieties_both_parents <- ped$biparental_subset
-varieties_any_parent   <- ped$uniparental_subset
-
-J <- compute_jaccard_matrix_cpp(bin_matrix)
-
-# parentage_both and parentage_any contain:
-# - ranked candidate parents
-# - parent retrieval statistics
-# - documented parent scores (used for Figure 1)
 
 parentage_both <- analyze_parentage_jaccard(
     data,
@@ -76,7 +62,7 @@ p <- plot_parental_zone_histogram(plot_data)
 
 save_publication_figure(
   plot = p,
-  filename = "jaccard_distribution_plot"
+  filename = "fig.3-jaccard_distribution_plot"
 )
 
 # ==============================================================================
@@ -129,7 +115,7 @@ p <- plot_relationship_boxplot(plot_data)
 
 save_publication_figure(
   plot = p,
-  filename = "jaccard_structural_analysis"
+  filename = "fig.4-jaccard_structural_analysis"
 )
 
 # ==============================================================================
