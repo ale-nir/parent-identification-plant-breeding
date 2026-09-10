@@ -128,3 +128,5 @@ save_publication_figure(
 #   relationship_both$score_stats
 #   relationship_any$score_stats
 # ==============================================================================
+
+message("Figures were successfully generated.")

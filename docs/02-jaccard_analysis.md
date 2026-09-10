@@ -50,7 +50,7 @@ for(k in top_values){
       data,
       J,
       varieties_both_parents,
-      top_n = k
+      top_k = k
     )
 
   jaccard_any[[paste0("Top", k)]] <-
@@ -58,7 +58,7 @@ for(k in top_values){
       data,
       J,
       varieties_any_parent,
-      top_n = k
+      top_k = k
     )
 
 }
