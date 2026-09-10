@@ -116,7 +116,7 @@ Alternatively, download the repository as a ZIP archive from GitHub and extract 
 │	├── lod_analysis.R
 │	├── combined_analysis.R
 │	├── parentage_utils.R
-│	└──plotting_utils.R
+│	└── plotting_utils.R
 │
 ├── src/
 │	├── jaccard_cpp.cpp
